@@ -1,6 +1,8 @@
-echo ".venv/
+.venv/
 .env
 __pycache__/
 *.pyc
 .DS_Store
-.idea/" > .gitignore
+.idea/
+data/
+output/
