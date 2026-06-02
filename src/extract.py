@@ -1,16 +1,51 @@
+"""
+================================================================================
+Extract Module — NYC Taxi ETL
+================================================================================
+Description : Handles data ingestion from the source Parquet file into a
+              PySpark DataFrame. Provides validation and structured logging
+              for observability.
+
+Author      : Roland Garcia
+Created     : 2026-01-01
+================================================================================
+"""
+
+# ---------------------------------------------------------------------------
+# Standard library
+# ---------------------------------------------------------------------------
 import logging
-import os
-from pyspark.sql import SparkSession
+
+# ---------------------------------------------------------------------------
+# Third-party
+# ---------------------------------------------------------------------------
+from pyspark.sql import DataFrame, SparkSession
+
+# ---------------------------------------------------------------------------
+# Internal
+# ---------------------------------------------------------------------------
 from src.config import DATA_PATH
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 
-def extract(spark : SparkSession):
-    path = DATA_PATH
+def extract(spark: SparkSession) -> DataFrame | None:
+    """
+    Read the NYC Taxi trip data from a Parquet file into a Spark DataFrame.
+
+    Args:
+        spark (SparkSession): Active Spark session used to read the file.
+
+    Returns:
+        DataFrame: Loaded Spark DataFrame if the file is read successfully.
+        None: If an error occurs during reading.
+
+    Raises:
+        Does not raise — errors are caught, logged, and None is returned
+        to allow the caller to handle the failure gracefully.
+    """
     try:
-        df = spark.read.parquet(path)
-        logging.info(f"Arquivo lido com sucesso: {path}")
+        df = spark.read.parquet(DATA_PATH)
+        logging.info(f"File read successfully: {DATA_PATH}")
         return df
-    except Exception as e:
-        logging.error(f"Error ao ler arquivo: {e}")
+    except Exception as err:
+        logging.error(f"Failed to read file '{DATA_PATH}': {err}")
         return None
